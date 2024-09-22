@@ -1,102 +1,12 @@
 "use client";
 
-// import { useFetchAllArrivalFlights } from "@/hooks/useFetchAllArrivalFlights";
-// import React from "react";
-
-// interface Flight {
-//   prefixIATA: string;
-//   scheduleDateTime: string;
-//   scheduleDate: string;
-//   flightDirection: string;
-//   route: {
-//     visa: string;
-//     eu: string;
-//     destinations: string[];
-//   };
-// }
-
-// interface FlightsCardProps {
-//   fromScheduleDate: string;
-//   toScheduleDate: string;
-//   arrivalDirection: string[];
-//   departureDirection: string[];
-// }
-
-// export default function FlightsCard({
-//   fromScheduleDate,
-//   toScheduleDate,
-//   arrivalDirection,
-//   departureDirection,
-// }: FlightsCardProps) {
-//   const { data: flights } = useFetchAllArrivalFlights(
-//     fromScheduleDate,
-//     toScheduleDate,
-//     arrivalDirection,
-//     departureDirection
-//   );
-
-//   console.log(flights);
-
-//   return (
-//     <div>
-//       {flights?.flights.map((flight: Flight, index: number) => (
-//         <div key={index} className="p-5 w-full rounded-2xl bg-white my-5">
-//           <p>Schedule DateTime: {flight.scheduleDateTime}</p>
-//           <p>Schedule Date: {flight.scheduleDate}</p>
-//           <p>
-//             Route:
-//             {flight.route.destinations.map((item, index) => {
-//               return (
-//                 <span key={index}>
-//                   {item}
-//                   {" -> "}
-//                 </span>
-//               );
-//             })}
-//           </p>
-//           <p>From: {flight.prefixIATA} (Manuel olarak eklenmiş kalkış yeri)</p>
-//           <p>Flight Direction: {flight.flightDirection}</p>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// }
-
-// import React from "react";
-// import { useFetchAllArrivalFlights } from "@/hooks/useFetchAllArrivalFlights";
-
-// interface FlightsCardProps {
-//   fromScheduleDate: string;
-//   toScheduleDate: string;
-//   arrivalDirection: string[];
-//   departureDirection: string[];
-// }
-
-// export default function FlightsCard({
-//   fromScheduleDate,
-//   toScheduleDate,
-//   arrivalDirection,
-//   departureDirection,
-// }: FlightsCardProps) {
-//   const { data, isLoading, error } = useFetchAllArrivalFlights(
-//     fromScheduleDate,
-//     toScheduleDate,
-//     arrivalDirection,
-//     departureDirection
-//   );
-
-//   if (isLoading) return <div>Loading...</div>;
-//   if (error) return <div>Error: {error.message}</div>;
-
-//   return <div>helloworld</div>;
-// }
-
 import React from "react";
 import { useFetchAllArrivalFlights } from "@/hooks/useFetchAllArrivalFlights";
 import { dateFormatter } from "@/helpers/dateFormatter";
 import LandingIcon from "@/icons/LandingIcon";
 import FlightTakeoff from "@/icons/FlightTakeoff";
 import LineIcon from "@/icons/LineIcon";
+import { useFetchFlightsCode } from "@/hooks/useFetchFlightsCode";
 
 interface FlightsCardProps {
   fromScheduleDate: string;
@@ -111,6 +21,16 @@ export default function FlightsCard({
   arrivalDirection,
   departureDirection,
 }: FlightsCardProps) {
+  console.log("arrivalDirection", arrivalDirection[1]);
+
+  const { data: codeToCityArrival } = useFetchFlightsCode(arrivalDirection[1]);
+  const { data: codeToCityDeparture } = useFetchFlightsCode(
+    departureDirection[1]
+  );
+
+  console.log("codeToCityArrival", codeToCityArrival);
+  console.log("codeToCityDeparture", codeToCityDeparture);
+
   const {
     data: arrivalFlights,
     isLoading,
@@ -121,13 +41,10 @@ export default function FlightsCard({
     arrivalDirection,
     departureDirection
   );
-  // const { data: flightsCode } = useFetchFlightsCode();
-  // console.log(flightsCode);
-
-  console.log("arrival flights", arrivalFlights);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
+  if (!arrivalFlights) return <div>No data</div>;
 
   return (
     <div>
@@ -137,10 +54,12 @@ export default function FlightsCard({
           <>
             <div
               key={flight.flightName}
-              className="pt-5 w-full rounded-t-2xl rounded-br-2xl bg-white mt-5"
+              className="pt-5 w-full rounded-t-2xl rounded-br-2xl bg-white mt-5 mr-5"
             >
               <div className="px-5">
-                <div className="mb-2 ">Flight: {flight.flightName}</div>
+                <div className="mb-2 font-bold">
+                  {codeToCityDeparture?.city} - {codeToCityArrival?.city}
+                </div>
                 <div className="flex justify-between">
                   <div className="relative">
                     <div className="flex">

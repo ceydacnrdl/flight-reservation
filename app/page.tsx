@@ -10,7 +10,7 @@ export default function Home() {
         <div className="relative w-full md:w-3/4 p-5">
           <FlightsFinder />
         </div>
-        <div className="flex w-full md:w-1/4 p-5">
+        <div className="flex w-ful p-5">
           <OptionsCol />
         </div>
       </div>

@@ -84,7 +84,6 @@ export function useFetchAllArrivalFlights(
         const response = await fetch(
           `/api/flights?route=${departureDirection[1]}&flightDirection=${departureDirection[0]}&fromScheduleDate=${fromScheduleDate}&toScheduleDate=${toScheduleDate}`
         );
-        console.log(response);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
